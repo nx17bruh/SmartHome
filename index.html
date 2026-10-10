@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Home Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></symbol>
+      <symbol id="i-temp" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/></symbol>
+      <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.2 6 10.5a6 6 0 0 1-12 0C6 9.2 12 3 12 3z"/></symbol>
+      <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></symbol>
+      <symbol id="i-fan" viewBox="0 0 24 24"><g class="fan-blades"><ellipse cx="12" cy="6.6" rx="2.4" ry="4"/><ellipse cx="12" cy="6.6" rx="2.4" ry="4" transform="rotate(120 12 12)"/><ellipse cx="12" cy="6.6" rx="2.4" ry="4" transform="rotate(240 12 12)"/></g><circle cx="12" cy="12" r="1.2"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></symbol>
+      <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- Setup warning (shown only if firebaseConfig still has placeholders) -->
+  <div id="configBanner" class="banner" hidden>
+    Firebase is not configured yet. Open <code>script.js</code> and paste your project values into <code>firebaseConfig</code>.
+  </div>
+
+  <!-- ============ LOGIN ============ -->
+  <main id="loginView" class="login" hidden>
+    <section class="login-card">
+      <div class="logo-mark"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg></div>
+      <h1>Smart Home Automation</h1>
+      <p class="subtitle">Control your home, simply.</p>
+
+      <form id="loginForm" novalidate>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+
+        <label for="password">Password</label>
+        <div class="password-wrap">
+          <input id="password" type="password" autocomplete="current-password" placeholder="Your password" required />
+          <button type="button" id="togglePassword" class="ghost-icon" aria-label="Show password" aria-pressed="false">
+            <svg class="icon" aria-hidden="true"><use id="togglePasswordIcon" href="#i-eye"/></svg>
+          </button>
+        </div>
+
+        <p id="loginError" class="form-error" role="alert" hidden></p>
+
+        <button id="loginBtn" type="submit" class="btn primary">
+          <span class="spinner" hidden></span>
+          <span class="btn-label">Log in</span>
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div id="dashView" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-mark small"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg></div>
+        <span class="brand-name">Smart Home</span>
+      </div>
+
+      <div class="topbar-right">
+        <div class="conn-pill" id="headerConn" title="Connection to Firebase">
+          <span class="dot" id="headerDot"></span>
+          <span id="headerConnText">Connecting…</span>
+        </div>
+        <div class="user-chip" title="Signed-in user">
+          <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>
+          <span id="userEmail" class="user-email"></span>
+        </div>
+        <button id="logoutBtn" class="btn ghost" type="button">
+          <svg class="icon" aria-hidden="true"><use href="#i-logout"/></svg>
+          <span>Log out</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard">
+
+      <p id="dbBanner" class="banner inline" role="alert" hidden></p>
+
+      <!-- Environment -->
+      <section aria-labelledby="envTitle">
+        <h2 id="envTitle">Environment</h2>
+        <div class="grid two">
+          <article class="card sensor" id="tempCard">
+            <div class="sensor-head">
+              <svg class="icon lg" aria-hidden="true"><use href="#i-temp"/></svg>
+              <span class="label">Temperature</span>
+            </div>
+            <p class="reading"><span id="tempValue">--</span><span class="unit" id="tempUnit" hidden>°C</span></p>
+            <p class="meta" id="tempMeta">Waiting for data</p>
+          </article>
+
+          <article class="card sensor" id="humCard">
+            <div class="sensor-head">
+              <svg class="icon lg" aria-hidden="true"><use href="#i-drop"/></svg>
+              <span class="label">Humidity</span>
+            </div>
+            <p class="reading"><span id="humValue">--</span><span class="unit" id="humUnit" hidden>%</span></p>
+            <p class="meta" id="humMeta">Waiting for data</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Device Control -->
+      <section aria-labelledby="devTitle">
+        <h2 id="devTitle">Device Control</h2>
+        <div class="grid two">
+          <article class="card device" id="lightCard" data-device="Light">
+            <div class="device-top">
+              <div class="device-icon"><svg class="icon lg" aria-hidden="true"><use href="#i-bulb"/></svg></div>
+              <label class="switch">
+                <input type="checkbox" id="lightToggle" aria-label="Light" disabled />
+                <span class="track"></span>
+              </label>
+            </div>
+            <h3>Light</h3>
+            <p class="device-status" id="lightStatus">--</p>
+          </article>
+
+          <article class="card device" id="fanCard" data-device="Fan">
+            <div class="device-top">
+              <div class="device-icon"><svg class="icon lg" aria-hidden="true"><use href="#i-fan"/></svg></div>
+              <label class="switch">
+                <input type="checkbox" id="fanToggle" aria-label="Fan" disabled />
+                <span class="track"></span>
+              </label>
+            </div>
+            <h3>Fan</h3>
+            <p class="device-status" id="fanStatus">--</p>
+          </article>
+        </div>
+
+        <button id="allOffBtn" class="btn danger all-off" type="button" disabled>
+          <svg class="icon" aria-hidden="true"><use href="#i-power"/></svg>
+          <span class="btn-label">ALL OFF</span>
+        </button>
+      </section>
+
+      <!-- Status -->
+      <section aria-labelledby="statusTitle">
+        <h2 id="statusTitle">System status</h2>
+        <div class="card status-list">
+          <div class="status-row">
+            <span>Firebase</span>
+            <span class="status-val"><span class="dot" id="fbDot"></span><span id="fbText">Disconnected</span></span>
+          </div>
+          <div class="status-row">
+            <span>ESP8266</span>
+            <span class="status-val"><span class="dot" id="espDot"></span><span id="espText">Unknown</span></span>
+          </div>
+          <div class="status-row">
+            <span>DHT11</span>
+            <span class="status-val"><span class="dot" id="dhtDot"></span><span id="dhtText">Unavailable</span></span>
+          </div>
+        </div>
+        <p class="hint" id="espHint">ESP8266 status stays “Unknown” until the board writes a <code>/Heartbeat</code> value (see README).</p>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
