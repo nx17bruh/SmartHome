@@ -198,3 +198,9 @@ The prototype demonstrates:
 ## 📄 License
 
 This project was developed for educational purposes. Add a license file if you intend to specify how others may use, modify, and distribute the source code.
+
+## 📧 Contact
+
+For any inquiries, reach out at  [Mail](mailto:nx17bruh@gmail.com) or connect via GitHub Issues.
+
+Developed with ❤️ by nx17bruh
