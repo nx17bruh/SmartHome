@@ -2,13 +2,13 @@
 
 An IoT-based Smart Home Automation System that allows users to remotely control a light and a fan and monitor real-time temperature and humidity through a website. The system uses a **NodeMCU ESP8266**, **DHT11 sensor**, **2-channel relay module**, and **Firebase Realtime Database**.
 
-## 📌 Project Overview
-
-The project connects hardware components to a web-based dashboard through Wi-Fi and Firebase. Users can monitor environmental conditions and control connected appliances from a phone or computer.
-
 ## 🚀 **Live Demo**
 
 Check out the live website: [SmartHome](https://nx17bruh.github.io/SmartHome/)
+
+## 📌 Project Overview
+
+The project connects hardware components to a web-based dashboard through Wi-Fi and Firebase. Users can monitor environmental conditions and control connected appliances from a phone or computer.
 
 ## 🎯 Objectives
 
