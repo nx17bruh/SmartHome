@@ -6,6 +6,10 @@ An IoT-based Smart Home Automation System that allows users to remotely control 
 
 The project connects hardware components to a web-based dashboard through Wi-Fi and Firebase. Users can monitor environmental conditions and control connected appliances from a phone or computer.
 
+## 🚀 **Live Demo**
+
+Check out the live website: [SmartHome](https://nx17bruh.github.io/SmartHome/)
+
 ## 🎯 Objectives
 
 - Monitor room temperature and humidity.
